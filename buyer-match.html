@@ -1,0 +1,780 @@
+<title>Buyer Match</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: tool bar on top; property brief (left) beside a live buyer read-out (right); full-screen deck for presenting to the vendor */
+:root{
+  --bg:#F2F4F1; --surface:#FFFFFF; --surface-2:#E8ECE7; --ink:#14201C; --muted:#5A6A64; --line:#D3DBD5;
+  --accent:#1E5A4A; --accent-ink:#FFFFFF; --accent-soft:#DCE9E3; --brass:#9A6F22; --danger:#B23A2E;
+  --p-fhb:#2F78B7; --p-young:#2E9566; --p-est:#6A4FB3; --p-down:#C0682F; --p-inv:#3F5466; --p-pro:#BD3F74; --p-life:#1F8E97; --p-reno:#9C7F12;
+  --f-display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Figtree", "Segoe UI", system-ui, sans-serif;
+  --f-data:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0E1513; --surface:#16201D; --surface-2:#1D2925; --ink:#E6EEEA; --muted:#9AABA4; --line:#2B3934;
+  --accent:#62B79D; --accent-ink:#0A1310; --accent-soft:#1F3A32; --brass:#D9AE5E; --danger:#E0786C;
+  --p-fhb:#6AAEE6; --p-young:#5FC795; --p-est:#A891EA; --p-down:#E99A63; --p-inv:#93A9BC; --p-pro:#EC7AA8; --p-life:#5CC6CE; --p-reno:#D4B547;
+  color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0E1513; --surface:#16201D; --surface-2:#1D2925; --ink:#E6EEEA; --muted:#9AABA4; --line:#2B3934;
+  --accent:#62B79D; --accent-ink:#0A1310; --accent-soft:#1F3A32; --brass:#D9AE5E; --danger:#E0786C;
+  --p-fhb:#6AAEE6; --p-young:#5FC795; --p-est:#A891EA; --p-down:#E99A63; --p-inv:#93A9BC; --p-pro:#EC7AA8; --p-life:#5CC6CE; --p-reno:#D4B547;
+  color-scheme:dark }
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-body);margin:0}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.01em}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.eyebrow{font:600 11px/1.2 var(--f-body);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+
+/* top bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.bar-in{max-width:1320px;margin:0 auto;padding:10px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.brand{display:flex;align-items:center;gap:10px;margin-right:auto}
+.brand-mark{width:30px;height:30px;border-radius:8px;background:var(--accent);display:grid;place-items:center}
+.brand-mark svg{width:18px;height:18px}
+.brand h1{font-size:19px;font-weight:800}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 12px;cursor:pointer;font-weight:600;font-size:14px;white-space:nowrap}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{border-color:transparent;background:transparent}
+.btn.danger{color:var(--danger)}
+.btn.warn{background:var(--danger);border-color:var(--danger);color:var(--surface)}
+select.btn{padding-right:28px;max-width:260px}
+
+/* main layout */
+.wrap{max-width:1320px;margin:0 auto;padding-inline:16px;padding-block:20px 60px;display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:900px){.wrap{grid-template-columns:minmax(0,1fr)}}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.form{display:flex;flex-direction:column}
+.sec{padding:16px 18px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:12px}
+.sec:first-child{border-top:0}
+.sec h2{font-size:15px;font-weight:700}
+.sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted);min-width:0}
+.in{width:100%;min-width:0;border:1px solid var(--line);background:var(--bg);border-radius:7px;padding:8px 10px;font-size:15px;font-weight:500;color:var(--ink)}
+.in:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
+textarea.in{resize:vertical;min-height:76px;line-height:1.45}
+.hint{font-size:12px;color:var(--muted);margin:0}
+
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:13px;font-weight:600;cursor:pointer;background:var(--bg);user-select:none}
+.seg input:checked+label{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.seg input:focus-visible+label{outline:2px solid var(--accent);outline-offset:2px}
+
+.photo-drop{display:flex;gap:12px;align-items:center}
+.thumb{width:96px;aspect-ratio:4/3;border-radius:7px;background:var(--surface-2);background-size:cover;background-position:center;flex:none;max-width:100%;display:grid;place-items:center;color:var(--muted);font-size:11px}
+
+.adj{display:grid;grid-template-columns:minmax(0,1fr) 120px 62px;gap:8px 10px;align-items:center;font-size:13px}
+.adj .nm{display:flex;gap:8px;align-items:center;font-weight:600;min-width:0}
+.dot{width:10px;height:10px;border-radius:3px;flex:none}
+.adj input[type=range]{width:100%;accent-color:var(--accent)}
+.adj .lv{font-size:12px;color:var(--muted);text-align:right}
+
+/* preview */
+.preview{display:flex;flex-direction:column;gap:18px;min-width:0}
+.headline{padding:20px 22px;display:flex;flex-direction:column;gap:14px}
+.addr{font-size:clamp(22px,3vw,30px);font-weight:800}
+.facts{display:flex;flex-wrap:wrap;gap:6px 16px;color:var(--muted);font-size:14px}
+.facts b{color:var(--ink);font-weight:700}
+.stack{display:flex;height:34px;border-radius:7px;overflow:hidden;gap:2px;background:var(--line)}
+.stack span{display:block;height:100%}
+.mix{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px 18px}
+.mix-row{display:flex;flex-direction:column;gap:4px;min-width:0}
+.mix-row .top{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:600}
+.mix-row .top span:last-child{font-family:var(--f-data);font-size:13px}
+.mix-row .track{height:6px;background:var(--surface-2);border-radius:3px;overflow:hidden}
+.mix-row .track i{display:block;height:100%;border-radius:3px}
+.model-note{font-size:12px;color:var(--muted);margin:0}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px}
+.pcard{padding:16px 18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.pcard-h{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.pcard h3{font-size:18px;font-weight:700}
+.share{font:800 28px/1 var(--f-display);font-variant-numeric:tabular-nums}
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:5px;background:var(--accent-soft);color:var(--accent)}
+.pcard p{margin:0;font-size:14px;color:var(--muted)}
+.pcard ul{margin:0;padding-left:18px;font-size:14px;display:flex;flex-direction:column;gap:3px}
+.pcard .lbl{font-size:12px;font-weight:700;color:var(--ink);margin-top:2px}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{font-size:12px;font-weight:600;border:1px solid var(--line);border-radius:999px;padding:2px 9px;background:var(--bg)}
+
+.drawer{padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:8px;font-weight:600;font-size:14px;z-index:50;max-width:calc(100vw - 32px)}
+
+/* ===== Deck ===== */
+.deck{position:fixed;inset:0;z-index:40;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:calc(12px + env(safe-area-inset-top,0px)) 16px calc(12px + env(safe-area-inset-bottom,0px))}
+.slide{container-type:inline-size;width:min(1180px, calc(100vw - 32px), calc((100dvh - 96px) * 1.6));aspect-ratio:16/10;max-width:100%;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;position:relative;
+  --s-xs:clamp(11px,1.05cqw,14px); --s-sm:clamp(12px,1.3cqw,17px); --s-b:clamp(14px,1.6cqw,21px); --s-h2:clamp(22px,3.5cqw,46px); --s-big:clamp(48px,8.5cqw,118px); --pad:clamp(20px,4.2cqw,56px)}
+@media (max-width:760px), (max-aspect-ratio:1/1){
+  .slide{aspect-ratio:auto;height:calc(100dvh - 96px);overflow:auto}
+}
+.s{height:100%;padding:var(--pad);display:flex;flex-direction:column;gap:clamp(12px,2cqw,26px);font-size:var(--s-b)}
+.s h2{font-size:var(--s-h2);font-weight:800;line-height:1.05}
+.s .eyebrow{font-size:var(--s-xs)}
+.s-foot{margin-top:auto;display:flex;justify-content:space-between;gap:12px;font-size:var(--s-xs);color:var(--muted);padding-top:8px;border-top:1px solid var(--line)}
+
+.cover{display:grid;grid-template-columns:1.05fr 1fr;height:100%}
+.cover-img{background:var(--accent);background-size:cover;background-position:center;position:relative;min-height:200px}
+.cover-img.empty{background:
+  repeating-linear-gradient(135deg, transparent 0 22px, color-mix(in srgb, var(--accent-ink) 10%, transparent) 22px 23px), var(--accent)}
+.cover-img.empty::after{content:"Add a property photo in the brief";position:absolute;left:var(--pad);bottom:var(--pad);color:var(--accent-ink);opacity:.75;font-size:var(--s-sm);font-weight:600}
+.cover-txt{padding:var(--pad);display:flex;flex-direction:column;gap:clamp(10px,1.6cqw,20px);justify-content:center}
+.cover-txt h2{font-size:clamp(28px,4.6cqw,62px)}
+.cover-txt .sub{font-size:var(--s-b);color:var(--muted)}
+.cover-facts{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:var(--s-sm)}
+.cover-facts b{font-family:var(--f-display);font-size:var(--s-h2);display:block;line-height:1;font-weight:800}
+@container (max-width:640px){ .cover{grid-template-columns:1fr;grid-template-rows:200px auto} }
+
+.mix-slide{display:grid;grid-template-columns:1.3fr 1fr;gap:clamp(16px,3cqw,40px);flex:1;min-height:0}
+@container (max-width:640px){ .mix-slide{grid-template-columns:1fr} }
+.bigstack{display:flex;flex-direction:column;gap:clamp(8px,1.2cqw,14px)}
+.brow{display:grid;grid-template-columns:minmax(0,13em) 1fr 3.4em;gap:12px;align-items:center;font-size:var(--s-sm);font-weight:600}
+.brow .t{height:clamp(14px,2.4cqw,30px);background:var(--surface-2);border-radius:5px;overflow:hidden}
+.brow .t i{display:block;height:100%;border-radius:5px}
+.brow .v{font-family:var(--f-data);text-align:right}
+.lead{background:var(--accent-soft);border-radius:12px;padding:clamp(14px,2.2cqw,28px);display:flex;flex-direction:column;gap:10px}
+.lead .big{font:800 var(--s-big)/0.9 var(--f-display);color:var(--accent);font-variant-numeric:tabular-nums}
+.lead ul{margin:0;padding-left:1.1em;font-size:var(--s-sm);display:flex;flex-direction:column;gap:4px}
+
+.persona{display:grid;grid-template-columns:.9fr 1fr 1fr;gap:clamp(14px,2.6cqw,36px);flex:1;min-height:0}
+@container (max-width:760px){ .persona{grid-template-columns:1fr} }
+.persona .who{display:flex;flex-direction:column;gap:12px}
+.persona .pct{font:800 var(--s-big)/.85 var(--f-display);font-variant-numeric:tabular-nums}
+.persona .pct small{font-size:.4em;font-weight:700;margin-left:2px}
+.persona .who p{margin:0;font-size:var(--s-sm);color:var(--muted)}
+.persona h3{font-size:var(--s-b);font-weight:700;margin-bottom:6px}
+.persona ul{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:5px;font-size:var(--s-sm)}
+.persona .col{display:flex;flex-direction:column;gap:clamp(12px,2cqw,22px);min-width:0}
+.box{border:1px solid var(--line);border-radius:10px;padding:clamp(10px,1.6cqw,18px)}
+.box p{margin:0;font-size:var(--s-sm)}
+
+.chan{width:100%;border-collapse:collapse;font-size:var(--s-sm)}
+.chan th{text-align:left;font-size:var(--s-xs);text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700;padding:0 8px 8px 0}
+.chan td{padding:clamp(6px,1cqw,11px) 8px clamp(6px,1cqw,11px) 0;border-top:1px solid var(--line);vertical-align:top}
+.chan td.c{white-space:nowrap}
+.chan .d{color:var(--muted);font-size:var(--s-xs)}
+.pdots{display:flex;gap:4px;flex-wrap:wrap}
+.pdots span{font-size:var(--s-xs);font-weight:700;padding:1px 7px;border-radius:999px;color:var(--surface);white-space:nowrap}
+
+.timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(10px,1.6cqw,20px);flex:1}
+@container (max-width:700px){ .timeline{grid-template-columns:1fr 1fr} }
+.tstep{border-top:4px solid var(--accent);padding-top:12px;display:flex;flex-direction:column;gap:8px}
+.tstep .wk{font-family:var(--f-data);font-size:var(--s-xs);color:var(--brass)}
+.tstep h3{font-size:var(--s-b);font-weight:700}
+.tstep ul{margin:0;padding-left:1.1em;font-size:var(--s-sm);display:flex;flex-direction:column;gap:4px}
+
+.close-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,3cqw,40px);flex:1}
+@container (max-width:640px){ .close-grid{grid-template-columns:1fr} }
+.guide{font:800 clamp(32px,5.4cqw,74px)/1 var(--f-display);font-variant-numeric:tabular-nums;color:var(--accent)}
+.agent{display:flex;flex-direction:column;gap:6px;font-size:var(--s-sm)}
+.agent .n{font:700 var(--s-h2)/1.1 var(--f-display)}
+.steps{margin:0;padding-left:1.3em;font-size:var(--s-sm);display:flex;flex-direction:column;gap:8px}
+
+.deck-ctl{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+.deck-ctl .count{font-family:var(--f-data);font-size:13px;color:var(--muted);min-width:64px;text-align:center}
+.pips{display:flex;gap:5px}
+.pips button{width:8px;height:8px;border-radius:50%;border:0;padding:0;background:var(--line);cursor:pointer}
+.pips button[aria-current="true"]{background:var(--accent)}
+
+@media (prefers-reduced-motion:no-preference){
+  .s{animation:fade .28s ease both}
+  @keyframes fade{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}
+}
+</style>
+
+<header class="bar">
+  <div class="bar-in">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-ink)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 4l9 7"/><path d="M6 10v9h12v-9"/><circle cx="12" cy="14" r="2.2"/></svg></div>
+      <h1>Buyer Match</h1>
+    </div>
+    <div class="tools">
+      <label for="apSelect" class="eyebrow" style="position:absolute;left:-9999px">Appraisal</label>
+      <select id="apSelect" class="btn" aria-label="Choose appraisal"></select>
+      <button class="btn" id="newBtn" type="button">New appraisal</button>
+      <button class="btn ghost" id="copyBtn" type="button">Copy summary</button>
+      <button class="btn ghost" id="agentBtn" type="button" aria-expanded="false">Your details</button>
+      <button class="btn primary" id="presentBtn" type="button">Present ▸</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <form class="panel form" id="brief" autocomplete="off">
+    <div class="sec" id="agentPanel" hidden>
+      <div class="sec-head"><h2>Your details</h2><span class="eyebrow">Shown on the last slide</span></div>
+      <div class="grid2">
+        <label class="f">Name<input class="in" id="agName" placeholder="e.g. Sam Taylor"></label>
+        <label class="f">Agency<input class="in" id="agAgency" placeholder="e.g. Harbour Realty"></label>
+        <label class="f">Mobile<input class="in" id="agPhone" inputmode="tel" placeholder="0400 000 000"></label>
+        <label class="f">Email<input class="in" id="agEmail" inputmode="email" placeholder="sam@agency.com.au"></label>
+      </div>
+      <p class="hint">Saved on this device only.</p>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><h2>Property</h2><span class="eyebrow" id="sampleTag"></span></div>
+      <label class="f">Street address<input class="in" id="address" placeholder="12 Banksia Avenue"></label>
+      <div class="grid2" style="grid-template-columns:1fr 90px">
+        <label class="f">Suburb<input class="in" id="suburb" placeholder="Suburb"></label>
+        <label class="f">State
+          <select class="in" id="state"><option>NSW</option><option>VIC</option><option>QLD</option><option>WA</option><option>SA</option><option>TAS</option><option>ACT</option><option>NT</option></select>
+        </label>
+      </div>
+      <div><div class="eyebrow" style="margin-bottom:6px">Type</div><div class="seg" id="typeSeg"></div></div>
+      <div class="grid4">
+        <label class="f">Beds<input class="in num" id="beds" type="number" min="0" max="12" inputmode="numeric"></label>
+        <label class="f">Baths<input class="in num" id="baths" type="number" min="0" max="10" inputmode="numeric"></label>
+        <label class="f">Cars<input class="in num" id="cars" type="number" min="0" max="10" inputmode="numeric"></label>
+        <label class="f">Land m²<input class="in num" id="land" type="number" min="0" inputmode="numeric"></label>
+      </div>
+      <div><div class="eyebrow" style="margin-bottom:6px">Condition</div><div class="seg" id="condSeg"></div></div>
+    </div>
+
+    <div class="sec">
+      <h2>Price &amp; method</h2>
+      <div class="grid2">
+        <label class="f">Price guide from ($)<input class="in num" id="priceLow" type="number" min="0" step="5000" inputmode="numeric"></label>
+        <label class="f">Price guide to ($)<input class="in num" id="priceHigh" type="number" min="0" step="5000" inputmode="numeric"></label>
+      </div>
+      <div><div class="eyebrow" style="margin-bottom:6px">Sale method</div><div class="seg" id="methodSeg"></div></div>
+      <label class="f">First home buyer ceiling ($)<input class="in num" id="cap" type="number" min="0" step="10000" inputmode="numeric"></label>
+      <p class="hint">The price where first home buyers in this area start dropping out. Set it to match your state's concession limits and local budgets.</p>
+    </div>
+
+    <div class="sec">
+      <h2>Features &amp; location</h2>
+      <div class="seg" id="featSeg"></div>
+    </div>
+
+    <div class="sec">
+      <h2>Top selling points</h2>
+      <label class="f">One per line, shown on the buyer mix slide<textarea class="in" id="points" rows="3"></textarea></label>
+      <div class="photo-drop">
+        <div class="thumb" id="thumb">No photo</div>
+        <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+          <label class="btn" for="photo" style="display:inline-block;width:max-content">Add cover photo</label>
+          <input id="photo" type="file" accept="image/*" hidden>
+          <button class="btn ghost danger" type="button" id="rmPhoto" hidden>Remove photo</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><h2>Your local knowledge</h2><button class="btn ghost" type="button" id="resetAdj" style="padding:2px 6px;font-size:12px">Reset</button></div>
+      <p class="hint">Nudge each group up or down based on who's actually been buying in this street.</p>
+      <div class="adj" id="adjList"></div>
+    </div>
+
+    <div class="sec">
+      <button class="btn danger" type="button" id="delBtn">Delete this appraisal</button>
+    </div>
+  </form>
+
+  <section class="preview" aria-live="polite">
+    <div class="panel headline" id="headline"></div>
+    <div class="cards" id="cards"></div>
+  </section>
+</main>
+
+<div class="deck" id="deck" hidden role="dialog" aria-label="Presentation">
+  <div class="slide" id="slide"></div>
+  <div class="deck-ctl">
+    <button class="btn" id="prevBtn" type="button" aria-label="Previous slide">◂ Back</button>
+    <div class="pips" id="pips"></div>
+    <span class="count" id="count"></span>
+    <button class="btn primary" id="nextBtn" type="button" aria-label="Next slide">Next ▸</button>
+    <button class="btn ghost" id="fsBtn" type="button">Full screen</button>
+    <button class="btn ghost" id="closeBtn" type="button">Exit</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Math.random().toString(36).slice(2, 10);
+const store = {
+  get(k, d){ try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch(e){ return false; } }
+};
+
+const TYPES = [['house','House'],['townhouse','Townhouse / villa'],['unit','Apartment / unit'],['acreage','Acreage / rural']];
+const CONDS = [['new','Near-new'],['renovated','Renovated'],['tidy','Tidy original'],['original','Dated original'],['needswork','Needs work']];
+const METHODS = [['auction','Auction'],['private','Private treaty'],['eoi','Expressions of interest']];
+const FEATURES = [
+  ['single','Single level'],['lowmaint','Low maintenance'],['pool','Pool'],['dual','Granny flat / dual living'],
+  ['office','Home office / study'],['shed','Large shed / workshop'],['entertain','Entertaining area'],['views','Views'],
+  ['corner','Corner block'],['devpot','Development potential'],['tenanted','Tenanted / rental history'],['solar','Solar / energy efficient'],
+  ['schools','Near good schools'],['transport','Near public transport'],['shops','Near shops & cafés'],['water','Near beach / water'],
+  ['cbd','Close to CBD / major employers'],['parks','Near parks & playgrounds']
+];
+
+const CHANNELS = {
+  portal:{name:'realestate.com.au & Domain', d:'Premium listing, saved-search alerts and buyer match emails'},
+  social:{name:'Targeted social ads', d:'Facebook & Instagram, aimed by life stage and location'},
+  database:{name:'Our buyer database', d:'Matched buyers called before launch'},
+  offmarket:{name:'Pre-market preview', d:'Private look for qualified buyers before the portals'},
+  signboard:{name:'Signboard & letterbox drop', d:'Neighbours and their friends and family'},
+  community:{name:'Local community reach', d:'School newsletters, community pages and local groups'},
+  video:{name:'Video & floor plan', d:'Walkthrough video so remote buyers can shortlist'},
+  interstate:{name:'Out-of-area digital', d:'Ads aimed at buyers searching from other regions and states'},
+  investor:{name:'Investor network', d:'Rental appraisal and our property management investor list'},
+  builders:{name:'Builders & developers', d:'Direct calls to local builders, renovators and developers'}
+};
+
+const has = (p,k) => p.features.includes(k);
+const mid = p => { const a = +p.priceLow || 0, b = +p.priceHigh || a; return a && b ? (a+b)/2 : (a||b); };
+const isType = (p,...t) => t.includes(p.type);
+const isCond = (p,...c) => c.includes(p.condition);
+
+const PERSONAS = [
+ { id:'fhb', name:'First home buyers', color:'--p-fhb',
+   who:'Singles and couples, mostly late 20s to mid 30s, buying their first place. Usually pre-approved, price-sensitive, and quick to act once the right home appears.',
+   score(p){ let s=.5; const m=mid(p), c=+p.cap||800000;
+     if(isType(p,'unit','townhouse')) s+=3; if(isType(p,'house')) s+=1.5; if(isType(p,'acreage')) s-=3;
+     if(!m||m<=c) s+=4; else if(m<=c*1.15) s+=1.5; else s-=5;
+     if(p.beds<=3) s+=2; else if(p.beds>=5) s-=2;
+     if(isCond(p,'new','renovated')) s+=1.5; if(isCond(p,'needswork')) s-=1;
+     if(has(p,'transport')) s+=1.5; if(has(p,'lowmaint')) s+=1; if(has(p,'shops')) s+=.5; return s; },
+   loves(p){ const l=[]; const m=mid(p);
+     if(m && m<=(+p.cap||800000)) l.push('Priced within reach of first home budgets');
+     if(isCond(p,'new','renovated')) l.push('Move-in ready, so no renovation budget needed');
+     if(has(p,'transport')) l.push('Public transport close by for the commute');
+     if(has(p,'lowmaint')) l.push('Low upkeep keeps weekends free');
+     if(has(p,'shops')) l.push('Cafés and shops within walking distance');
+     if(has(p,'solar')) l.push('Lower power bills from solar'); return l; },
+   asks(p){ const l=[]; if(mid(p)>(+p.cap||800000)) l.push('The top of the guide stretches typical first home budgets');
+     if(isType(p,'unit','townhouse')) l.push('Strata levies, sinking fund and building health');
+     l.push('Building & pest report and contract ready on day one');
+     if(p.method==='auction') l.push('Many need finance confirmed before they can bid unconditionally'); return l; },
+   channels:['portal','social','database','video'],
+   inspect:'Saturday open plus a weekday twilight inspection for buyers who work standard hours.',
+   tactic:'Pre-approved buyers decide fast. Have contract, strata or building reports ready from the first open.' },
+
+ { id:'young', name:'Young families upsizing', color:'--p-young',
+   who:'Couples in their 30s with young kids or one on the way, selling or outgrowing a unit or small home. Schools, a yard and a safe street lead their search.',
+   score(p){ let s=.5; if(isType(p,'house')) s+=3; if(isType(p,'townhouse')) s+=1.5; if(isType(p,'acreage')) s+=.5;
+     if(p.beds>=3) s+=2; if(p.beds>=4) s+=1; if(p.beds<=2) s-=3;
+     if(+p.land>=450) s+=1.5; if(has(p,'schools')) s+=3; if(has(p,'parks')) s+=1.5; if(has(p,'pool')) s+=.5;
+     if(has(p,'entertain')) s+=.5; if(isCond(p,'needswork')) s-=1; return s; },
+   loves(p){ const l=[];
+     if(p.beds>=3) l.push(`${p.beds} bedrooms, so room for the kids to grow`);
+     if(has(p,'schools')) l.push('Walk or short drive to well-regarded schools');
+     if(has(p,'parks')) l.push('Parks and playgrounds nearby');
+     if(+p.land>=450) l.push(`${(+p.land).toLocaleString('en-AU')} m² block with space for a yard`);
+     if(has(p,'entertain')) l.push('Entertaining area for birthday parties and weekends');
+     if(has(p,'pool')) l.push('Pool for summer'); if(has(p,'office')) l.push('Study for working from home'); return l; },
+   asks(p){ const l=['School catchment boundaries','Traffic and street safety'];
+     if(has(p,'pool')) l.push('Pool fencing compliance certificate');
+     l.push('Usually need to sell their current place first, so timing matters'); return l; },
+   channels:['portal','social','community','database'],
+   inspect:'Saturday mid-morning opens. Families plan inspections around kids\' sport, so publish times early.',
+   tactic:'Have catchment maps and a list of nearby schools, parks and childcare printed at the open.' },
+
+ { id:'est', name:'Established families', color:'--p-est',
+   who:'Families in their 40s with school-age or teenage kids, often on second or third homes with strong equity. They want space to spread out and will pay for quality.',
+   score(p){ let s=.5; const m=mid(p), c=+p.cap||800000;
+     if(isType(p,'house')) s+=3; if(isType(p,'acreage')) s+=1; if(isType(p,'unit')) s-=2;
+     if(p.beds>=4) s+=3; if(p.beds>=5) s+=1; if(p.beds<=3) s-=2; if(p.baths>=2) s+=1.5;
+     if(+p.land>=600) s+=1.5; if(has(p,'pool')) s+=2; if(has(p,'schools')) s+=2; if(has(p,'dual')) s+=1.5;
+     if(has(p,'entertain')) s+=1; if(isCond(p,'new','renovated')) s+=1.5; if(m>=c*1.3) s+=2; return s; },
+   loves(p){ const l=[];
+     if(p.beds>=4) l.push(`${p.beds} bedrooms and ${p.baths||1} bathrooms, so everyone gets space`);
+     if(has(p,'dual')) l.push('Granny flat works as a teen retreat or space for parents');
+     if(has(p,'pool')) l.push('Pool and outdoor living');
+     if(has(p,'entertain')) l.push('Entertaining area for hosting');
+     if(isCond(p,'new','renovated')) l.push('Renovated finish with nothing to do');
+     if(has(p,'schools')) l.push('Secondary schools within reach'); if(has(p,'office')) l.push('Separate study'); return l; },
+   asks(p){ return ['Separation between kids\' and parents\' zones','Storage and garaging for cars, bikes and gear','Comparable sales in the street']; },
+   channels:['portal','database','offmarket','social'],
+   inspect:'Saturday opens plus private inspections on request. Second inspections are common, so book them in.',
+   tactic:'This buyer is often selling locally too. Our database of local sellers is a key source.' },
+
+ { id:'down', name:'Downsizers', color:'--p-down',
+   who:'Empty nesters, usually 55+, selling the family home with a lot of equity. They want single-level, easy-care living near shops, medical services and family.',
+   score(p){ let s=.5; if(has(p,'single')) s+=4; if(has(p,'lowmaint')) s+=3;
+     if(isType(p,'unit','townhouse')) s+=2; if(isType(p,'acreage')) s-=2;
+     if(p.beds>=2&&p.beds<=3) s+=2; if(p.beds>=5) s-=2; if(has(p,'shops')) s+=2;
+     if(isCond(p,'new','renovated')) s+=2; if(isCond(p,'needswork','original')) s-=1.5;
+     if(has(p,'water')) s+=1.5; if(+p.land>1000) s-=2; return s; },
+   loves(p){ const l=[]; if(has(p,'single')) l.push('Single level, no stairs');
+     if(has(p,'lowmaint')) l.push('Easy-care home and garden'); if(has(p,'shops')) l.push('Shops, cafés and services close by');
+     if(isCond(p,'new','renovated')) l.push('Nothing to fix or update'); if(has(p,'water')) l.push('Near the water');
+     if(has(p,'views')) l.push('Views to enjoy'); if(p.cars>=2) l.push('Room for the car and the caravan or boat'); return l; },
+   asks(p){ return ['Step-free access and bathroom layout','Ongoing costs: rates, strata, maintenance','Settlement timing that lines up with their own sale']; },
+   channels:['database','offmarket','signboard','portal'],
+   inspect:'Private inspections and quieter weekday times. Many prefer a one-on-one walk-through.',
+   tactic:'Often already living locally. Letterbox drops and our seller database find them before the portals do.' },
+
+ { id:'inv', name:'Investors', color:'--p-inv',
+   who:'Buyers focused on yield and growth, from local first-time investors to interstate portfolio builders. They buy on numbers and often never attend an open.',
+   score(p){ let s=.5; const m=mid(p), c=+p.cap||800000;
+     if(isType(p,'unit')) s+=2.5; if(isType(p,'townhouse')) s+=2; if(isType(p,'acreage')) s-=2;
+     if(has(p,'tenanted')) s+=3; if(has(p,'transport')) s+=2; if(has(p,'cbd')) s+=1.5;
+     if(!m||m<=c*1.1) s+=2; else if(m>c*1.6) s-=1.5; if(has(p,'lowmaint')) s+=1.5;
+     if(has(p,'dual')) s+=3; if(has(p,'devpot')) s+=1; return s; },
+   loves(p){ const l=[]; if(has(p,'tenanted')) l.push('Proven rental income from day one');
+     if(has(p,'dual')) l.push('Dual living: two incomes from one title');
+     if(has(p,'transport')) l.push('Transport access keeps tenants coming'); if(has(p,'cbd')) l.push('Close to major employers');
+     if(has(p,'lowmaint')) l.push('Low maintenance keeps holding costs down');
+     if(has(p,'devpot')) l.push('Upside from future development'); if(isCond(p,'new','renovated')) l.push('Recent works boost depreciation'); return l; },
+   asks(p){ const l=['Rental appraisal and expected yield','Vacancy rates in the suburb'];
+     if(has(p,'tenanted')) l.push('Lease terms and tenant history'); if(isType(p,'unit','townhouse')) l.push('Strata levies and by-laws'); return l; },
+   channels:['investor','portal','video','interstate'],
+   inspect:'Mostly online. Video, floor plan and rental appraisal do the work, with one inspection before they sign.',
+   tactic:'Lead the listing copy with the rental appraisal. Investors filter on yield before they look at photos.' },
+
+ { id:'pro', name:'Professional couples', color:'--p-pro',
+   who:'Dual-income couples without kids, late 20s to 40s, who value lifestyle and location over size. Design-conscious and time-poor.',
+   score(p){ let s=.5; const m=mid(p), c=+p.cap||800000;
+     if(isType(p,'unit','townhouse')) s+=2; if(isType(p,'house')) s+=1; if(isType(p,'acreage')) s-=2;
+     if(p.beds>=2&&p.beds<=3) s+=2; if(p.beds>=5) s-=2; if(has(p,'cbd')) s+=2.5; if(has(p,'shops')) s+=2;
+     if(isCond(p,'new','renovated')) s+=2; if(isCond(p,'needswork')) s-=1.5; if(has(p,'transport')) s+=1.5;
+     if(has(p,'office')) s+=2; if(m>=c*.9) s+=1; return s; },
+   loves(p){ const l=[]; if(has(p,'cbd')) l.push('Short commute to the CBD and major employers');
+     if(has(p,'shops')) l.push('Walk to cafés, restaurants and bars'); if(isCond(p,'new','renovated')) l.push('Contemporary finishes');
+     if(has(p,'office')) l.push('Dedicated home office'); if(has(p,'entertain')) l.push('Space to entertain friends');
+     if(has(p,'views')) l.push('Views'); if(has(p,'transport')) l.push('Transport on the doorstep'); return l; },
+   asks(p){ return ['Natural light, noise and aspect','Parking and storage','Internet speed and NBN connection']; },
+   channels:['portal','social','video','database'],
+   inspect:'Weekday twilight (5:30–6:15pm) plus Saturday. Twilight shows off the lighting and suits work hours.',
+   tactic:'Strong styling and photography matter most to this group. They shortlist on the hero image.' },
+
+ { id:'life', name:'Lifestyle movers', color:'--p-life',
+   who:'Tree-changers, sea-changers and relocators, often from capital cities or interstate, trading city life for space, views or the coast. Many work remotely.',
+   score(p){ let s=.5; if(isType(p,'acreage')) s+=4; if(has(p,'water')) s+=3; if(+p.land>=1500) s+=2;
+     if(has(p,'views')) s+=2; if(has(p,'shed')) s+=2; if(has(p,'office')) s+=1.5; if(has(p,'pool')) s+=1;
+     if(isType(p,'unit')) s-=1; if(has(p,'cbd')) s-=1; return s; },
+   loves(p){ const l=[]; if(has(p,'water')) l.push('Close to the beach and water');
+     if(isType(p,'acreage')||+p.land>=1500) l.push(`Room to breathe on ${(+p.land||0).toLocaleString('en-AU')} m²`);
+     if(has(p,'views')) l.push('Views'); if(has(p,'shed')) l.push('Shed for the boat, the van or the workshop');
+     if(has(p,'office')) l.push('Home office for remote work'); if(has(p,'pool')) l.push('Pool'); if(has(p,'solar')) l.push('Solar and lower running costs'); return l; },
+   asks(p){ return ['What daily life and services are like in the area','Internet reliability for remote work','Can they buy before visiting? (contracts and remote signing)']; },
+   channels:['interstate','video','portal','social'],
+   inspect:'Video walkthrough first, then a single long private inspection. Many fly or drive in for the day.',
+   tactic:'Build the listing for someone who has never been here: suburb guide, drive times and a full video tour.' },
+
+ { id:'reno', name:'Renovators & developers', color:'--p-reno',
+   who:'Builders, renovators and owner-builders who buy for land value and potential. They price in the cost of works and move quickly on the right block.',
+   score(p){ let s=.5; if(isCond(p,'original')) s+=4; if(isCond(p,'needswork')) s+=5; if(isCond(p,'tidy')) s+=1;
+     if(+p.land>=600) s+=2; if(+p.land>=800) s+=1; if(has(p,'devpot')) s+=4; if(has(p,'corner')) s+=2;
+     if(isCond(p,'new','renovated')) s-=4; if(isType(p,'unit')) s-=3; return s; },
+   loves(p){ const l=[]; if(isCond(p,'original','needswork')) l.push('Add value through renovation');
+     if(has(p,'devpot')) l.push('Development or subdivision upside'); if(has(p,'corner')) l.push('Corner block with dual frontage');
+     if(+p.land>=600) l.push(`${(+p.land).toLocaleString('en-AU')} m² land holding`); if(has(p,'dual')) l.push('Existing secondary dwelling'); return l; },
+   asks(p){ return ['Zoning, overlays and minimum lot size','Any DA or plans already drawn','Structural condition and asbestos']; },
+   channels:['builders','database','offmarket','portal'],
+   inspect:'Private inspections with zoning and site information on hand. They rarely need a styled open.',
+   tactic:'Have a zoning summary, survey and any concept plans ready. It shortens their due diligence and lifts their offer.' }
+];
+const P = Object.fromEntries(PERSONAS.map(p => [p.id, p]));
+
+function compute(p){
+  let rows = PERSONAS.map(x => { const adj = +(p.adjust?.[x.id] || 0); return { x, raw: Math.max(0, x.score(p)) * Math.max(0, 1 + adj * .4) }; });
+  let tot = rows.reduce((a,r) => a + r.raw, 0) || 1;
+  rows = rows.filter(r => r.raw / tot >= .06);
+  tot = rows.reduce((a,r) => a + r.raw, 0) || 1;
+  rows.forEach(r => { r.exact = r.raw / tot * 100; r.share = Math.floor(r.exact); });
+  let left = 100 - rows.reduce((a,r) => a + r.share, 0);
+  [...rows].sort((a,b) => (b.exact - b.share) - (a.exact - a.share)).slice(0, left).forEach(r => r.share++);
+  return rows.sort((a,b) => b.share - a.share);
+}
+
+const money = n => { n = +n || 0; if(!n) return '—'; if(n >= 1e6) return '$' + parseFloat((n/1e6).toFixed(2)) + 'm'; return '$' + Math.round(n/1000) + 'k'; };
+const guide = p => { const a=+p.priceLow, b=+p.priceHigh; if(a&&b&&a!==b) return money(a) + ' – ' + money(b); return money(a||b); };
+const label = (list, v) => (list.find(x => x[0] === v) || [, ''])[1];
+
+/* ---------- state ---------- */
+const sample = () => ({ id: uid(), sample: true, address:'12 Banksia Avenue', suburb:'Example Heights', state:'NSW', type:'house', beds:4, baths:2, cars:2, land:620,
+  priceLow:1150000, priceHigh:1250000, cap:800000, condition:'renovated', method:'auction',
+  features:['schools','parks','entertain','office','transport','solar'],
+  points:'Renovated kitchen with stone benchtops\nNorth-facing backyard\nFive-minute walk to the primary school', photo:'', adjust:{}, updated: Date.now() });
+const blank = () => ({ id: uid(), address:'', suburb:'', state: cur()?.state || 'NSW', type:'house', beds:3, baths:2, cars:1, land:500,
+  priceLow:'', priceHigh:'', cap: cur()?.cap || 800000, condition:'tidy', method:'auction', features:[], points:'', photo:'', adjust:{}, updated: Date.now() });
+
+let agent = store.get('bm.agent', { name:'', agency:'', phone:'', email:'' });
+let aps = store.get('bm.appraisals', null);
+if(!Array.isArray(aps) || !aps.length) aps = [sample()];
+let curId = store.get('bm.current', aps[0].id);
+if(!aps.find(a => a.id === curId)) curId = aps[0].id;
+function cur(){ return (typeof aps !== 'undefined' && aps) ? aps.find(a => a.id === curId) : null; }
+
+let saveT;
+function save(){ clearTimeout(saveT); saveT = setTimeout(() => {
+  const ok = store.set('bm.appraisals', aps) && store.set('bm.current', curId) && store.set('bm.agent', agent);
+  if(!ok) toast('Could not save on this device. Try a smaller photo.');
+}, 300); }
+
+function toast(msg){ const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(t._t); t._t = setTimeout(() => t.hidden = true, 2600); }
+
+/* ---------- build form controls ---------- */
+function seg(el, name, list, multi){
+  el.innerHTML = list.map(([v,l]) => `<input type="${multi?'checkbox':'radio'}" name="${name}" id="${name}-${v}" value="${v}"><label for="${name}-${v}">${esc(l)}</label>`).join('');
+}
+seg($('#typeSeg'), 'type', TYPES); seg($('#condSeg'), 'condition', CONDS); seg($('#methodSeg'), 'method', METHODS); seg($('#featSeg'), 'feat', FEATURES, true);
+$('#adjList').innerHTML = PERSONAS.map(x => `
+  <label class="nm" for="adj-${x.id}"><span class="dot" style="background:var(${x.color})"></span>${esc(x.name)}</label>
+  <input type="range" id="adj-${x.id}" min="-2" max="2" step="1" data-adj="${x.id}">
+  <span class="lv" id="lv-${x.id}"></span>`).join('');
+const ADJ_LBL = {'-2':'Rare','-1':'Fewer','0':'As modelled','1':'More','2':'Many'};
+
+const FIELDS = ['address','suburb','state','beds','baths','cars','land','priceLow','priceHigh','cap','points'];
+function fillForm(){
+  const p = cur();
+  FIELDS.forEach(f => { $('#'+f).value = p[f] ?? ''; });
+  [['type',p.type],['condition',p.condition],['method',p.method]].forEach(([n,v]) => { const r = document.getElementById(n+'-'+v); if(r) r.checked = true; });
+  FEATURES.forEach(([k]) => { document.getElementById('feat-'+k).checked = p.features.includes(k); });
+  PERSONAS.forEach(x => { const v = p.adjust?.[x.id] || 0; $('#adj-'+x.id).value = v; $('#lv-'+x.id).textContent = ADJ_LBL[v]; });
+  $('#agName').value = agent.name; $('#agAgency').value = agent.agency; $('#agPhone').value = agent.phone; $('#agEmail').value = agent.email;
+  $('#sampleTag').textContent = p.sample ? 'Example property' : '';
+  renderThumb(); renderSelect();
+}
+function renderThumb(){ const p = cur(), t = $('#thumb');
+  t.style.backgroundImage = p.photo ? `url("${p.photo}")` : ''; t.textContent = p.photo ? '' : 'No photo'; $('#rmPhoto').hidden = !p.photo; }
+function renderSelect(){
+  $('#apSelect').innerHTML = [...aps].sort((a,b) => b.updated - a.updated).map(a =>
+    `<option value="${a.id}" ${a.id===curId?'selected':''}>${esc(a.address || 'Untitled appraisal')}${a.suburb ? ', ' + esc(a.suburb) : ''}${a.sample ? ' (example)' : ''}</option>`).join('');
+}
+
+$('#brief').addEventListener('input', e => {
+  const t = e.target, p = cur();
+  if(t.id.startsWith('ag')){ agent = { name:$('#agName').value, agency:$('#agAgency').value, phone:$('#agPhone').value, email:$('#agEmail').value }; save(); return; }
+  if(t.id === 'photo') return;
+  if(FIELDS.includes(t.id)) p[t.id] = ['beds','baths','cars','land','priceLow','priceHigh','cap'].includes(t.id) ? (t.value === '' ? '' : +t.value) : t.value;
+  if(['type','condition','method'].includes(t.name)) p[t.name] = t.value;
+  if(t.name === 'feat') p.features = FEATURES.map(f => f[0]).filter(k => document.getElementById('feat-'+k).checked);
+  if(t.dataset.adj){ p.adjust = p.adjust || {}; p.adjust[t.dataset.adj] = +t.value; $('#lv-'+t.dataset.adj).textContent = ADJ_LBL[t.value]; }
+  if(p.sample && (t.id === 'address' || t.id === 'suburb')){ p.sample = false; $('#sampleTag').textContent = ''; }
+  p.updated = Date.now();
+  if(t.id === 'address' || t.id === 'suburb') renderSelect();
+  render(); save();
+});
+$('#brief').addEventListener('submit', e => e.preventDefault());
+$('#resetAdj').onclick = () => { cur().adjust = {}; fillForm(); render(); save(); };
+
+$('#photo').addEventListener('change', e => {
+  const f = e.target.files[0]; if(!f) return;
+  const img = new Image(), url = URL.createObjectURL(f);
+  img.onload = () => {
+    const max = 1600, k = Math.min(1, max / Math.max(img.width, img.height));
+    const c = document.createElement('canvas'); c.width = Math.round(img.width*k); c.height = Math.round(img.height*k);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    cur().photo = c.toDataURL('image/jpeg', .78); URL.revokeObjectURL(url); e.target.value = '';
+    renderThumb(); save(); toast('Cover photo added');
+  };
+  img.onerror = () => toast('That file could not be read as an image.');
+  img.src = url;
+});
+$('#rmPhoto').onclick = () => { cur().photo = ''; renderThumb(); save(); };
+
+$('#apSelect').onchange = e => { curId = e.target.value; fillForm(); render(); save(); };
+$('#newBtn').onclick = () => { const a = blank(); aps.push(a); curId = a.id; fillForm(); render(); save(); $('#address').focus(); toast('New appraisal started'); };
+$('#agentBtn').onclick = () => { const pn = $('#agentPanel'); pn.hidden = !pn.hidden; $('#agentBtn').setAttribute('aria-expanded', !pn.hidden); if(!pn.hidden) $('#agName').focus(); };
+let delArm;
+$('#delBtn').onclick = () => {
+  const b = $('#delBtn');
+  if(!delArm){ delArm = setTimeout(() => { delArm = null; b.textContent = 'Delete this appraisal'; b.classList.remove('warn'); }, 3500);
+    b.textContent = 'Tap again to delete'; b.classList.add('warn'); return; }
+  clearTimeout(delArm); delArm = null; b.textContent = 'Delete this appraisal'; b.classList.remove('warn');
+  aps = aps.filter(a => a.id !== curId); if(!aps.length) aps = [blank()];
+  curId = aps[0].id; fillForm(); render(); save(); toast('Appraisal deleted');
+};
+
+/* ---------- preview ---------- */
+function factsLine(p){
+  const bits = [];
+  bits.push(`<span><b>${esc(label(TYPES,p.type))}</b></span>`);
+  if(p.type !== 'unit' || p.beds) bits.push(`<span><b class="num">${p.beds||0}</b> bed · <b class="num">${p.baths||0}</b> bath · <b class="num">${p.cars||0}</b> car</span>`);
+  if(+p.land) bits.push(`<span><b class="num">${(+p.land).toLocaleString('en-AU')}</b> m²</span>`);
+  bits.push(`<span>Guide <b class="num">${guide(p)}</b></span>`);
+  bits.push(`<span>${esc(label(METHODS,p.method))}</span>`);
+  return bits.join('');
+}
+function render(){
+  const p = cur(), mix = compute(p);
+  $('#headline').innerHTML = `
+    <div><div class="eyebrow">Estimated buyer mix</div>
+    <div class="addr">${esc(p.address || 'Untitled appraisal')}${p.suburb ? `<span style="color:var(--muted);font-weight:600">, ${esc(p.suburb)} ${esc(p.state)}</span>` : ''}</div></div>
+    <div class="facts">${factsLine(p)}</div>
+    <div class="stack" role="img" aria-label="${esc(mix.map(r => r.x.name + ' ' + r.share + '%').join(', '))}">${mix.map(r => `<span style="width:${r.share}%;background:var(${r.x.color})" title="${esc(r.x.name)} ${r.share}%"></span>`).join('')}</div>
+    <div class="mix">${mix.map(r => `<div class="mix-row"><div class="top"><span>${esc(r.x.name)}</span><span>${r.share}%</span></div><div class="track"><i style="width:${r.share}%;background:var(${r.x.color})"></i></div></div>`).join('')}</div>
+    <p class="model-note">Modelled from the property's type, size, price, condition and features, then adjusted by your local knowledge. A guide for the conversation, not sales data.</p>`;
+  $('#cards').innerHTML = mix.slice(0,4).map((r,i) => {
+    const loves = r.x.loves(p);
+    return `<article class="panel pcard">
+      <div class="pcard-h"><div style="display:flex;flex-direction:column;gap:4px">${i===0?'<span class="tag">Lead buyer</span>':''}<h3><span class="dot" style="display:inline-block;background:var(${r.x.color});margin-right:7px"></span>${esc(r.x.name)}</h3></div><div class="share" style="color:var(${r.x.color})">${r.share}%</div></div>
+      <p>${esc(r.x.who)}</p>
+      <div class="lbl">What they'll love here</div>
+      ${loves.length ? `<ul>${loves.slice(0,4).map(l => `<li>${esc(l)}</li>`).join('')}</ul>` : `<p>Tick more features in the brief to list what this buyer will value.</p>`}
+      <div class="lbl">How we'll reach them</div>
+      <div class="chips">${r.x.channels.map(c => `<span class="chip">${esc(CHANNELS[c].name)}</span>`).join('')}</div>
+    </article>`; }).join('');
+}
+
+/* ---------- slides ---------- */
+function slides(){
+  const p = cur(), mix = compute(p), top = mix.slice(0, 4), lead = mix[0];
+  const where = [p.suburb, p.state].filter(Boolean).join(' ');
+  const foot = (t) => `<div class="s-foot"><span>${esc(p.address || 'Appraisal')}${where ? ', ' + esc(where) : ''}</span><span>${esc(t)}</span></div>`;
+  const out = [];
+  const points = (p.points || '').split('\n').map(s => s.trim()).filter(Boolean);
+
+  out.push(`<div class="cover">
+    <div class="cover-img ${p.photo ? '' : 'empty'}" ${p.photo ? `style="background-image:url('${p.photo}')"` : ''}></div>
+    <div class="cover-txt">
+      <div class="eyebrow">Who will buy your home</div>
+      <h2>${esc(p.address || 'Your property')}</h2>
+      <div class="sub">${esc(where)}</div>
+      <div class="cover-facts num">
+        ${p.beds ? `<span><b>${p.beds}</b>bed</span>` : ''}${p.baths ? `<span><b>${p.baths}</b>bath</span>` : ''}${p.cars ? `<span><b>${p.cars}</b>car</span>` : ''}${+p.land ? `<span><b>${(+p.land).toLocaleString('en-AU')}</b>m²</span>` : ''}
+      </div>
+      <div class="sub">Prepared by ${esc(agent.name || 'your agent')}${agent.agency ? ', ' + esc(agent.agency) : ''}</div>
+    </div></div>`);
+
+  out.push(`<div class="s">
+    <div><div class="eyebrow">The buyer mix</div><h2>${mix.length} buyer groups will compete for this home</h2></div>
+    <div class="mix-slide">
+      <div class="bigstack">${mix.map(r => `<div class="brow"><span>${esc(r.x.name)}</span><div class="t"><i style="width:${r.share}%;background:var(${r.x.color})"></i></div><span class="v">${r.share}%</span></div>`).join('')}</div>
+      <div class="lead">
+        <div class="eyebrow">Lead buyer</div>
+        <div class="big">${lead.share}%</div>
+        <div style="font:700 var(--s-b)/1.2 var(--f-display)">${esc(lead.x.name)}</div>
+        ${points.length ? `<div class="eyebrow" style="margin-top:6px">What sets this home apart</div><ul>${points.slice(0,4).map(s => `<li>${esc(s)}</li>`).join('')}</ul>` : ''}
+      </div>
+    </div>
+    ${foot('Estimated share of serious buyer enquiry')}</div>`);
+
+  top.forEach((r, i) => {
+    const loves = r.x.loves(p), asks = r.x.asks(p);
+    out.push(`<div class="s">
+      <div><div class="eyebrow">Buyer profile ${i+1} of ${top.length}</div><h2>${esc(r.x.name)}</h2></div>
+      <div class="persona">
+        <div class="who"><div class="pct" style="color:var(${r.x.color})">${r.share}<small>%</small></div><p>${esc(r.x.who)}</p></div>
+        <div class="col">
+          <div><h3>What they'll love here</h3>${loves.length ? `<ul>${loves.slice(0,5).map(l => `<li>${esc(l)}</li>`).join('')}</ul>` : '<p style="margin:0;color:var(--muted);font-size:var(--s-sm)">Location and value for money.</p>'}</div>
+          <div><h3>What they'll ask about</h3><ul>${asks.slice(0,4).map(l => `<li>${esc(l)}</li>`).join('')}</ul></div>
+        </div>
+        <div class="col">
+          <div><h3>Where we'll find them</h3><ul>${r.x.channels.map(c => `<li>${esc(CHANNELS[c].name)}</li>`).join('')}</ul></div>
+          <div class="box"><div class="eyebrow" style="margin-bottom:4px">Inspections</div><p>${esc(r.x.inspect)}</p></div>
+          <div class="box"><div class="eyebrow" style="margin-bottom:4px">Our approach</div><p>${esc(r.x.tactic)}</p></div>
+        </div>
+      </div>
+      ${foot(r.x.name + ' · ' + r.share + '% of likely buyers')}</div>`);
+  });
+
+  const ch = {};
+  mix.forEach(r => r.x.channels.forEach((c, idx) => { ch[c] = ch[c] || { w:0, who:[] }; ch[c].w += r.share * (1 - idx*.15); ch[c].who.push(r); }));
+  const chRows = Object.entries(ch).sort((a,b) => b[1].w - a[1].w).slice(0, 7);
+  out.push(`<div class="s">
+    <div><div class="eyebrow">Marketing plan</div><h2>Every channel is chosen for a buyer group</h2></div>
+    <div style="overflow-x:auto;flex:1;min-height:0"><table class="chan">
+      <thead><tr><th>Channel</th><th>Reaches</th></tr></thead>
+      <tbody>${chRows.map(([c, v]) => `<tr><td class="c"><div style="font-weight:700">${esc(CHANNELS[c].name)}</div><div class="d" style="white-space:normal">${esc(CHANNELS[c].d)}</div></td>
+        <td><div class="pdots">${v.who.map(r => `<span style="background:var(${r.x.color})">${esc(r.x.name)}</span>`).join('')}</div></td></tr>`).join('')}</tbody>
+    </table></div>
+    ${foot('Ranked by share of likely buyers reached')}</div>`);
+
+  const finalStep = { auction:['Auction day','Auction on site or in rooms','Pre-auction offers reviewed with you','Bidder registration and finance checks'],
+    private:['Offers & negotiation','Best-and-final offers called if competition builds','Every offer presented in writing','Contract exchanged with deposit'],
+    eoi:['EOI closing date','Written expressions of interest close','Shortlisted buyers asked for final terms','Contract exchanged with preferred buyer'] }[p.method];
+  out.push(`<div class="s">
+    <div><div class="eyebrow">Campaign · ${esc(label(METHODS, p.method))}</div><h2>Four weeks from launch to sold</h2></div>
+    <div class="timeline">
+      <div class="tstep"><span class="wk">PREP</span><h3>Before launch</h3><ul><li>Styling, photography, video and floor plan</li><li>Copy written for ${esc(lead.x.name.toLowerCase())}</li><li>Database matches called</li></ul></div>
+      <div class="tstep"><span class="wk">WEEK 1</span><h3>Launch</h3><ul><li>Live on realestate.com.au &amp; Domain</li><li>Targeted social campaign starts</li><li>First open home</li></ul></div>
+      <div class="tstep"><span class="wk">WEEKS 2–3</span><h3>Build competition</h3><ul><li>Opens timed for each buyer group</li><li>Weekly report with enquiry and feedback</li><li>Second inspections and contract requests</li></ul></div>
+      <div class="tstep"><span class="wk">WEEK 4</span><h3>${esc(finalStep[0])}</h3><ul>${finalStep.slice(1).map(s => `<li>${esc(s)}</li>`).join('')}</ul></div>
+    </div>
+    ${foot('Timing adjusts to market feedback')}</div>`);
+
+  out.push(`<div class="s">
+    <div><div class="eyebrow">Next steps</div><h2>Let's get the right buyers competing</h2></div>
+    <div class="close-grid">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div><div class="eyebrow">Price guide</div><div class="guide">${guide(p)}</div></div>
+        <ol class="steps"><li>Agree on method, price guide and launch date</li><li>Sign the agency agreement and book photography</li><li>We call our matched ${esc(lead.x.name.toLowerCase())} before launch</li></ol>
+      </div>
+      <div class="box agent" style="justify-content:center">
+        <div class="n">${esc(agent.name || 'Your agent')}</div>
+        ${agent.agency ? `<div style="color:var(--muted)">${esc(agent.agency)}</div>` : ''}
+        ${agent.phone ? `<div class="num" style="font-weight:700">${esc(agent.phone)}</div>` : ''}
+        ${agent.email ? `<div>${esc(agent.email)}</div>` : ''}
+        ${!agent.name && !agent.phone ? `<div style="color:var(--muted)">Add your details under “Your details” in the toolbar.</div>` : ''}
+      </div>
+    </div>
+    ${foot('Thank you')}</div>`);
+  return out;
+}
+
+let deckI = 0, deckList = [], wake = null;
+function showSlide(i){
+  deckI = Math.max(0, Math.min(deckList.length - 1, i));
+  $('#slide').innerHTML = deckList[deckI];
+  $('#count').textContent = `${deckI+1} / ${deckList.length}`;
+  $('#pips').innerHTML = deckList.map((_, k) => `<button type="button" aria-label="Slide ${k+1}" aria-current="${k===deckI}" data-k="${k}"></button>`).join('');
+  $('#prevBtn').disabled = deckI === 0; $('#nextBtn').textContent = deckI === deckList.length - 1 ? 'Finish' : 'Next ▸';
+}
+async function openDeck(){
+  deckList = slides(); $('#deck').hidden = false; document.body.style.overflow = 'hidden'; showSlide(0); $('#nextBtn').focus();
+  try { wake = await navigator.wakeLock?.request('screen'); } catch(e){ wake = null; }
+}
+function closeDeck(){
+  $('#deck').hidden = true; document.body.style.overflow = '';
+  try { if(document.fullscreenElement) document.exitFullscreen(); } catch(e){}
+  try { wake?.release(); } catch(e){} wake = null; $('#presentBtn').focus();
+}
+$('#presentBtn').onclick = openDeck;
+$('#closeBtn').onclick = closeDeck;
+$('#prevBtn').onclick = () => showSlide(deckI - 1);
+$('#nextBtn').onclick = () => deckI === deckList.length - 1 ? closeDeck() : showSlide(deckI + 1);
+$('#pips').onclick = e => { if(e.target.dataset.k) showSlide(+e.target.dataset.k); };
+$('#fsBtn').onclick = async () => { try { document.fullscreenElement ? await document.exitFullscreen() : await $('#deck').requestFullscreen(); } catch(e){ toast('Full screen is not available here.'); } };
+document.addEventListener('keydown', e => {
+  if($('#deck').hidden) return;
+  if(['ArrowRight','PageDown',' '].includes(e.key)){ e.preventDefault(); showSlide(deckI + 1); }
+  else if(['ArrowLeft','PageUp'].includes(e.key)){ e.preventDefault(); showSlide(deckI - 1); }
+  else if(e.key === 'Escape' && !document.fullscreenElement) closeDeck();
+});
+let tx = null, ty = null;
+$('#slide').addEventListener('touchstart', e => { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, { passive:true });
+$('#slide').addEventListener('touchend', e => { if(tx === null) return; const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+  if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) showSlide(deckI + (dx < 0 ? 1 : -1)); tx = null; });
+
+/* ---------- copy summary ---------- */
+$('#copyBtn').onclick = () => {
+  const p = cur(), mix = compute(p);
+  const lines = [`Buyer profile: ${p.address || 'Untitled'}${p.suburb ? ', ' + p.suburb + ' ' + p.state : ''}`,
+    `${label(TYPES,p.type)} · ${p.beds} bed ${p.baths} bath ${p.cars} car${+p.land ? ' · ' + p.land + ' m²' : ''} · Guide ${guide(p)} · ${label(METHODS,p.method)}`, '',
+    'Estimated buyer mix:', ...mix.map(r => `  ${r.share}%  ${r.x.name}`), ''];
+  mix.slice(0,3).forEach(r => { const l = r.x.loves(p); lines.push(`${r.x.name} (${r.share}%)`); if(l.length) lines.push('  Will love: ' + l.slice(0,3).join('; ')); lines.push('  Reach via: ' + r.x.channels.map(c => CHANNELS[c].name).join(', '), ''); });
+  if(agent.name) lines.push(`${agent.name}${agent.agency ? ', ' + agent.agency : ''}${agent.phone ? ' · ' + agent.phone : ''}`);
+  const text = lines.join('\n');
+  try { navigator.clipboard.writeText(text).then(() => toast('Summary copied'), () => fallbackCopy(text)); } catch(e){ fallbackCopy(text); }
+};
+function fallbackCopy(text){
+  const ta = document.createElement('textarea'); ta.value = text; ta.style.cssText = 'position:fixed;left:-9999px'; document.body.appendChild(ta); ta.select();
+  let ok = false; try { ok = document.execCommand('copy'); } catch(e){} ta.remove(); toast(ok ? 'Summary copied' : 'Copy is blocked here. Select the text in your notes instead.');
+}
+
+fillForm(); render();
+})();
+</script>
