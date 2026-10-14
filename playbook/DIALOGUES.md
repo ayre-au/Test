@@ -118,6 +118,13 @@
 > **3 days out:** "**3 days to go**, just letting you know. Thursday's the day."
 > **Preview:** "**This is the preview.** It hits the market Saturday."
 
+### D9. Negotiate alone now, or compete later ⭐
+> "Look at the last 5 corrections in the Australian market. On average they've lasted about 12 months, and prices came down about [12%*] from the peak."
+> "So if you find a home you love now, the correction is already factored into the price. **I'd rather be the only one negotiating today than one of 10 offers when certainty comes back.** Because when confidence returns, the buyers come back, and so do the prices."
+> "You're not trying to pick the bottom. You're trying to buy the right home, at a fair price, without a bidding war."
+
+*\*Check the % before using it publicly. PropTrack's national chart shows smaller peak-to-trough falls, so attribute the figure (e.g. "according to John McGrath") or use the 12-month duration on its own.*
+
 ---
 
 ## E. Lines to live by
