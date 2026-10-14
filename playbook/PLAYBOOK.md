@@ -90,6 +90,31 @@ Sections run from most important to least important:
 - **Rents are rising about 7% a year.** Over the last 5 years renting has cost about $11,000 more on average. Less new rental supply means lower vacancy and higher rents.
 - New building isn't keeping up. **QLD has the biggest shortfall of new dwellings in Australia.**
 
+**PropTrack, Spring 2026 slides**
+- National prices fell for the **6th consecutive month in September** and are **3.3% below the March peak**. Annual growth has slowed to 0.1%.
+- **"The slowdown is being driven by a pullback in demand, not a surge in supply."**
+- **This downturn started out more steeply than past ones** (1982, 1990, 1994–95, 2008, 2010–11, 2018–19, 2022).
+- **Time on market:** nationally, homes are taking about 6 days longer to sell than a year ago.
+- **Sales:** year-to-date sales are down in 7 of 8 capitals, including Brisbane −18% and Perth −24%.
+- **Enquiry:** enquiry *per new listing* has fallen more than total enquiry.
+- **Resilience:** units and regional markets are holding up better than houses and the capitals.
+- **Stock:** new listings are down, but total stock is up because homes take longer to sell.
+- **Owners:** unemployment is about 4.6%, with little forced selling, and most owners are in a strong equity position.
+- **What it means for agents:**
+  - Buyers expect to negotiate.
+  - Getting the initial price right matters.
+  - Vendor expectations need resetting with the latest evidence.
+  - Buyers have more choice.
+  - Borrowing capacity is pushing demand down the price ladder.
+  - Correctly priced properties still transact.
+
+**Tom Panos: 5 reasons you should sell right now**
+1. Prices are still closer to the market peak than not.
+2. Compare today's price with where it'll be in 3, 6 or 12 months.
+3. If you're upgrading, you're better off.
+4. Listing volumes are increasing daily.
+5. Rates aren't at their peak yet.
+
 **The long-term tailwind:** from 2032 to 2042 the baby boomer wealth transfer brings a wave of downsizing and estate sales across SEQ.
 
 ### 1.4 What this means for us
@@ -262,10 +287,10 @@ The goal is to get buyers saying, "I'm not going to make an offer on this, becau
 ## 9. Weekly rhythm
 | Day | Theme | Focus |
 |---|---|---|
-| **Monday** | Sets the tone | Process current work. Must-call list. Price reviews. |
+| **Monday** | Let's go (sets the tone) | Process current work. Must-call list. Price reviews. |
 | **Tuesday** | Conversion | Process current work. **10–12 Zoom vendor meetings.** |
 | **Wednesday** | Going pro | Future work: improve the business, systems, training, roleplay. |
-| **Thursday** | Execute *(notes say "Excuse", check)* | Launch-selling texts, buyer callbacks, campaign prep. |
+| **Thursday** | Execution | Launch-selling texts, buyer callbacks, campaign prep. |
 | **Friday** | Measure | **Vendor reports.** KPIs. Buyer work comes first. |
 | **Saturday** | Game day | Opens. Smile at the first one. Feedback calls the same day. |
 
@@ -368,6 +393,8 @@ The goal is to get buyers saying, "I'm not going to make an offer on this, becau
 - **AI and offshoring need processes and systems first** before they can work. Elon Musk's "Algorithm": question every requirement and **delete steps** out of the system.
 - *"No one using AI is super successful… yet."* The opportunity is to be first.
 - Example shown: "Malcolm", an AI tool. "Ask for a report. Malcolm supplies the data."
+- **First power move (AI):** move from ChatGPT to Codex, or from Claude to **Claude Code / Claude Cowork**. This repo is set up for that.
+- **"Tell it who you are" prompt (Transform XIV, Level 1):** give the AI your role, skills, weaknesses, the feedback you keep getting, your goals, and the advice you give new hires, so everything it writes sounds like you.
 - **Recruit now.** Good agents are getting beaten up by their principals.
 - **Bell:** work 2 out of 3 with the "big dogs" (they have the worst processes). Wingman X.
 - **Clear lanes in the team.**
@@ -413,7 +440,6 @@ The goal is to get buyers saying, "I'm not going to make an offer on this, becau
 - "Place way" (strategy list)
 - "Running a menu" (strategy list)
 - "Ted la way of thinking"
-- Thursday = "Excuse" (probably "Execute")
 - "Brisbane is already down 45%" (enquiry, volume or price?)
 - "Hair × frais"
 - PVMSTM expansion (assumed to be Purpose, Vision, Mission, Strategy, Tactics, Measurements)
